@@ -18,7 +18,7 @@ from nids_datasets import Dataset, DatasetInfo
 
 ## Dataset Information
 
-The `nids-datasets` package currently supports two datasets: UNSW-NB15 and CIC-IDS2017. Each of these datasets contains a mix of normal traffic and different types of attack traffic, which are identified by their respective labels. The UNSW-NB15 dataset has 10 unique class labels, and the CIC-IDS2017 dataset has 24 unique class labels. 
+The `nids-datasets` package currently supports two datasets: [UNSW-NB15](https://research.unsw.edu.au/projects/unsw-nb15-dataset) and [CIC-IDS2017](https://www.unb.ca/cic/datasets/ids-2017.html). Each of these datasets contains a mix of normal traffic and different types of attack traffic, which are identified by their respective labels. The UNSW-NB15 dataset has 10 unique class labels, and the CIC-IDS2017 dataset has 24 unique class labels. 
 
 - UNSW-NB15 Labels: 'normal', 'exploits', 'dos', 'fuzzers', 'generic', 'reconnaissance', 'worms', 'shellcode', 'backdoor', 'analysis'
 - CIC-IDS2017 Labels: 'BENIGN', 'FTP-Patator', 'SSH-Patator', 'DoS slowloris', 'DoS Slowhttptest', 'DoS Hulk', 'Heartbleed', 'Web Attack – Brute Force', 'Web Attack – XSS', 'Web Attack – SQL Injection', 'Infiltration', 'Bot', 'PortScan', 'DDoS', 'normal', 'exploits', 'dos', 'fuzzers', 'generic', 'reconnaissance', 'worms', 'shellcode', 'backdoor', 'analysis', 'DoS GoldenEye'
