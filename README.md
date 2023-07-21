@@ -1,22 +1,6 @@
 # NIDS Datasets (nids-datasets)
 
-The `nids-datasets` package is a Python-based toolkit developed to provide an efficient and seamless experience to researchers working with Network Intrusion Detection Systems (NIDS). Specifically, the package aids in downloading, managing, and interacting with popular NIDS datasets, namely UNSW-NB15 and CIC-IDS2017.
-
-## Introduction
-
-The field of cybersecurity has been continuously evolving and expanding, and one of its critical components is the detection and prevention of network intrusions. Network Intrusion Detection Systems (NIDS) are an essential part of this cyber defense infrastructure. They monitor network traffic for suspicious activities and issue alerts when such activities are discovered. 
-
-To build and improve these systems, it's necessary to work with comprehensive datasets that capture different types of network traffic, including various kinds of attacks. The `nids-datasets` package provides an interface to interact with two of the most widely used datasets in this domain: UNSW-NB15 and CIC-IDS2017.
-
-## Features
-
-The package provides several features:
-
-- Downloading datasets: `nids-datasets` allows for the easy download of large and complex datasets.
-- Subsetting: You can choose to download specific parts (or "subsets") of the datasets.
-- Parsing and reading data: The package provides utility functions for reading the downloaded datasets.
-- Merging subsets: You can merge subsets into a single, comprehensive dataset for analysis.
-- Byte extraction: You can extract and analyze byte sequences from the datasets.
+The `nids-datasets` package provides functionality to download and utilize specially curated and extracted datasets from the original CIC-IDS2017 and INSW-NB15 datasets. These datasets, which initially were only flow datasets, have been enhanced to include packet-level information from the raw PCAP files. The dataset contains both packet-level and flow-level data for over 230 million packets, with 179 million packets from UNSW-NB15 and 54 million packets from CIC-IDS2017.
 
 ## Installation
 
@@ -43,12 +27,12 @@ The `nids-datasets` package currently supports two datasets: UNSW-NB15 and CIC-I
 
 Each dataset consists of four subsets:
 
-1. Network Flows - Contains flow-level data.
-2. Packet Fields - Contains packet header information.
-3. Packet Bytes - Contains packet byte information in the range (0-255).
-4. Payload Bytes - Contains payload byte information in the range (0-255).
+1. Network-Flows - Contains flow-level data.
+2. Packet-Fields - Contains packet header information.
+3. Packet-Bytes - Contains packet byte information in the range (0-255).
+4. Payload-Bytes - Contains payload byte information in the range (0-255).
 
-Each subset contains data stored in parquet files, an efficient and performant data storage format that maintains the schema along with the data. You can choose to download all subsets or select specific subsets depending on your analysis requirements.
+Each subset contains 18 files (except Network-Flows, which has one file), where the data is stored in parquet format. In total, this package provides access to 110 files. You can choose to download all subsets or select specific subsets or specific files depending on your analysis requirements.
 
 ## Getting Information on the Datasets
 
@@ -72,6 +56,25 @@ data = Dataset(dataset=dataset, subset=subset, files=files)
 data.download()
 ```
 
+The directory structure after downloading files:
+
+```
+UNSW-NB15
+│
+├───Network-Flows
+│   └───UNSW_Flow.parquet
+│
+├───Packet-Fields
+│   ├───Packet_Fields_File_3.parquet
+│   ├───Packet_Fields_File_5.parquet
+│   └───Packet_Fields_File_10.parquet
+│
+└───Payload-Bytes
+    ├───Payload_Bytes_File_3.parquet
+    ├───Payload_Bytes_File_5.parquet
+    └───Payload_Bytes_File_10.parquet
+```
+
 You can then load the parquet files using pandas:
 
 ```python
@@ -81,33 +84,83 @@ df = pd.read_parquet('UNSW-NB15/Packet-Fields/Packet_Fields_File_10.parquet')
 
 ## Merging Subsets
 
-The `merge()` method allows you to merge all data of each packet across all subsets, providing both flow-level and packet-level information in a single dataset.
+The `merge()` method allows you to merge all data of each packet across all subsets, providing both flow-level and packet-level information in a single file.
 
 ```python
 data.merge()
 ```
 
+The merge method, by default, uses the details specified while instantiating the `Dataset` class. You can also pass subset=list of subsets and files=list of files you want to merge.
+
+The directory structure after merging files:
+
+```
+UNSW-NB15
+│
+├───Network-Flows
+│   └───UNSW_Flow.parquet
+│
+├───Packet-Fields
+│   ├───Packet_Fields_File_3.parquet
+│   ├───Packet_Fields_File_5.parquet
+│   └───Packet_Fields_File_10.parquet
+│
+├───Payload-Bytes
+│   ├───Payload_Bytes_File_3.parquet
+│   ├───Payload_Bytes_File_5.parquet
+│   └───Payload_Bytes_File_10.parquet
+│
+└───Network-Flows+Packet-Fields+Payload-Bytes
+    ├───Network_Flows+Packet_Fields+Payload_Bytes_File_3.parquet
+    ├───Network_Flows+Packet_Fields+Payload_Bytes_File_5.parquet
+    └───Network_Flows+Packet_Fields+Payload_Bytes_File_10.parquet
+```
+
 ## Extracting Bytes
 
-If you need to work with more than the first 1500-1600 bytes of the packets, you can use the `bytes()` method:
+Packet-Bytes and Payload-Bytes subset contains the first 1500-1600 bytes. To retrieve all bytes (up to 65535 bytes) from the Packet-Bytes and Payload-Bytes subsets, use the `Bytes()` method. This function requires files in the Packet-Fields subset to operate. You can specify how many bytes you want to extract by passing the max_bytes parameter.
 
 ```python
 data.bytes(payload=True, max_bytes=2500)
 ```
 
+Use packet=True to extract packet bytes. You can also pass files=list of files to retrieve bytes.
+
+The directory structure after extracting bytes:
+
+```
+UNSW-NB15
+│
+├───Network-Flows
+│   └───UNSW_Flow.parquet
+│
+├───Packet-Fields
+│   ├───Packet_Fields_File_3.parquet
+│   ├───Packet_Fields_File_5.parquet
+│   └───Packet_Fields_File_10.parquet
+│
+├───Payload-Bytes
+│   ├───Payload_Bytes_File_3.parquet
+│   ├───Payload_Bytes_File_5.parquet
+│   └───Payload_Bytes_File_10.parquet
+│
+├───Network-Flows+Packet-Fields+Payload-Bytes
+│   ├───Network_Flows+Packet_Fields+Payload_Bytes_File_3.parquet
+│   ├───Network_Flows+Packet_Fields+Payload_Bytes_File_5.parquet
+│   └───Network_Flows+Packet_Fields+Payload_Bytes_File_10.parquet
+│
+└───Payload-Bytes-2500
+    ├───Payload_Bytes_File_3.parquet
+    ├───Payload_Bytes_File_5.parquet
+    └───Payload_Bytes_File_10.parquet
+```
+
 ## Reading the Datasets
 
-The `read()` method allows you to read files using Hugging Face's `load_dataset` method:
+The `read()` method allows you to read files using Hugging Face's `load_dataset` method, one subset at a time. The dataset and files parameters are optional if the same details are used to instantiate the `Dataset` class.
 
 ```python
 dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2])
-```
-
-For scenarios where you want to process one packet at a time, you can use the `stream=True` parameter:
-
-```python
-dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], stream=True)
-print(next(iter(dataset)))
 ```
 
 The `read()` method returns a dataset that you can convert to a pandas dataframe or save to a CSV, parquet, or any other desired file format:
@@ -116,6 +169,13 @@ The `read()` method returns a dataset that you can convert to a pandas dataframe
 df = dataset.to_pandas()
 dataset.to_csv('file_path_to_save.csv')
 dataset.to_parquet('file_path_to_save.parquet')
+```
+
+For scenarios where you want to process one packet at a time, you can use the `stream=True` parameter:
+
+```python
+dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], stream=True)
+print(next(iter(dataset)))
 ```
 
 ## Notes
