@@ -1,4 +1,4 @@
-# NIDS Datasets (nids-datasets)
+# NIDS Datasets
 
 The `nids-datasets` package provides functionality to download and utilize specially curated and extracted datasets from the original CIC-IDS2017 and INSW-NB15 datasets. These datasets, which initially were only flow datasets, have been enhanced to include packet-level information from the raw PCAP files. The dataset contains both packet-level and flow-level data for over 230 million packets, with 179 million packets from UNSW-NB15 and 54 million packets from CIC-IDS2017.
 
