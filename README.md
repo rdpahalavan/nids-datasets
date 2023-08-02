@@ -171,6 +171,25 @@ dataset.to_csv('file_path_to_save.csv')
 dataset.to_parquet('file_path_to_save.parquet')
 ```
 
+To get specific packets using their index, you can use the `packets` parameter.
+
+```python
+dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], packets='100:600')
+# This will return 100th packet to 599th packet (total of 500 packets)
+
+dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], packets=':10%')
+# This will return the first 10 percent of packets.
+
+dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], packets='20%:30%')
+# This will return the packets from 20th perencent to 30th percent.
+```
+
+To use multiprocessing, pass how many processes to use in the `num_proc` parameter.
+
+```python
+dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], num_proc=2)
+```
+
 For scenarios where you want to process one packet at a time, you can use the `stream=True` parameter:
 
 ```python
