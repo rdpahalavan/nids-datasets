@@ -181,7 +181,7 @@ dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], pa
 # This will return the first 10 percent of packets.
 
 dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2], packets='20%:30%')
-# This will return the packets from 20th perencent to 30th percent.
+# This will return the packets from 20th percent to 30th percent.
 ```
 
 To use multiprocessing, pass how many processes to use in the `num_proc` parameter.
