@@ -157,7 +157,7 @@ UNSW-NB15
 
 ## Reading the Datasets
 
-The `read()` method allows you to read files using Hugging Face's `load_dataset` method, one subset at a time. The dataset and files parameters are optional if the same details are used to instantiate the `Dataset` class.
+The `read()` method allows you to read files using Hugging Face's `load_dataset` method, one subset at a time. This method can be used directly without using the `download()` method. The dataset and files parameters are optional if the same details are used to instantiate the `Dataset` class.
 
 ```python
 dataset = data.read(dataset='UNSW-NB15', subset='Packet-Fields', files=[1,2])
