@@ -26,9 +26,13 @@ class Dataset:
         self.dataset = dataset
         if subset == 'all':
             subset = ['Network-Flows', 'Packet-Fields', 'Packet-Bytes', 'Payload-Bytes']
+        elif isinstance(subset, str):
+            subset = [subset]
         self.subset = subset
         if files == 'all':
             files = [i for i in range(1, 19)]
+        elif isinstance(files, str):
+            files = [files]
         self.files = files
         if self.dataset == 'UNSW-NB15':
             self.flow_file = "UNSW_Flow"
@@ -76,7 +80,7 @@ class Dataset:
                 df = df.merge(flow_df, how='inner', on='flow_id')
             attack_label = df.pop('attack_label')
             df.insert(len(df.columns), 'attack_label', attack_label)
-            df.to_parquet(f"{self.dataset}/{'+'.join(subset)}/{'+'.join(subset).replace('-', '_')}_{file}.parquet",
+            df.to_parquet(f"{self.dataset}/{'+'.join(subset)}/{'+'.join(subset).replace('-', '_')}_File_{file}.parquet",
                           index=False)
             del df
 
@@ -106,15 +110,18 @@ class Dataset:
             del df_final
             del df
 
-    def read(self, dataset=None, subset=None, files=None, stream=False):
+    def read(self, dataset=None, subset=None, files=None, packets=None, num_proc=None, stream=False):
         if dataset is None:
             dataset = self.dataset
         if subset is None:
             subset = self.subset[0]
         if files is None:
             files = self.files
+        if packets is None:
+            split = 'train'
+        else:
+            split = f'train[{packets}]'
         files = [f"{subset.replace('-', '_')}_File_{file}.parquet" for file in files]
-        dataset = load_dataset(path=f"rdpahalavan/{dataset}", data_dir=subset, data_files=files, split='train',
+        dataset = load_dataset(path=f"rdpahalavan/{dataset}", data_dir=subset, data_files=files, split=split, num_proc=num_proc,
                                streaming=stream)
         return dataset
-        
